@@ -41,6 +41,13 @@ const queryCost = await new AccountBalanceQuery()
 
 console.log("The cost of query is: " +queryCost);
 
+//Check the new account's balance
+const getNewBalance = await new AccountBalanceQuery()
+     .setAccountId(newAccountId)
+     .execute(client);
+
+console.log("The account balance after the transfer is: " +getNewBalance.hbars.toTinybars() +" tinybar.")
+
 
 // Get the new account ID
 const getReceipt = await newAccount.getReceipt(client);
