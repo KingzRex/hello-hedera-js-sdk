@@ -30,6 +30,10 @@ const sendHbar = await new TransferTransaction()
 .addHbarTransfer(newAccountId, Hbar.fromTinybars(1000)) //Receiving account
 .execute(client);
 
+//Verify the transaction reached consensus
+const transactionReceipt = await sendHbar.getReceipt(client);
+console.log("The transfer transaction from my account to the new account was: " + transactionReceipt.status.toString());
+
 // Get the new account ID
 const getReceipt = await newAccount.getReceipt(client);
 const newAccountId = getReceipt.accountId;
