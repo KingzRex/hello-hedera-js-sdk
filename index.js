@@ -34,6 +34,14 @@ const sendHbar = await new TransferTransaction()
 const transactionReceipt = await sendHbar.getReceipt(client);
 console.log("The transfer transaction from my account to the new account was: " + transactionReceipt.status.toString());
 
+//Request the cost of the query
+const queryCost = await new AccountBalanceQuery()
+     .setAccountId(newAccountId)
+     .getCost(client);
+
+console.log("The cost of query is: " +queryCost);
+
+
 // Get the new account ID
 const getReceipt = await newAccount.getReceipt(client);
 const newAccountId = getReceipt.accountId;
