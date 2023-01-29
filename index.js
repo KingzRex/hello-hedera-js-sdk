@@ -21,6 +21,15 @@ const newAccount = await new AccountCreateTransaction()
   .setInitialBalance(Hbar.fromTinybars(1000))
   .execute(client);
 
+  //console.log("The new account balance is: " +accountBalance.hbars.toTinybars() +" tinybar.");
+//-----------------------<enter code below>--------------------------------------
+
+//Create the transfer transaction
+const sendHbar = await new TransferTransaction()
+.addHbarTransfer(myAccountId, Hbar.fromTinybars(-1000)) //Sending account
+.addHbarTransfer(newAccountId, Hbar.fromTinybars(1000)) //Receiving account
+.execute(client);
+
 // Get the new account ID
 const getReceipt = await newAccount.getReceipt(client);
 const newAccountId = getReceipt.accountId;
