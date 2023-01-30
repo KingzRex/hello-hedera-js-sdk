@@ -108,17 +108,48 @@ async function main() {
       );
     });
 
-    // Send one message
-let sendResponse = await new TopicMessageSubmitTransaction({
-	topicId: topicId,
-	message: "Hello, HCS!",
-}).execute(client);
+  // Send one message
+  let sendResponse = await new TopicMessageSubmitTransaction({
+    topicId: topicId,
+    message: "Hello, HCS!",
+  }).execute(client);
 
-//Get the receipt of the transaction
- await sendResponse.getReceipt(client);
+  //Get the receipt of the transaction
+  await sendResponse.getReceipt(client);
 
-//Get the status of the transaction
-const transactionStatus = getReceipt.status
-console.log("The message transaction status " + transactionStatus)
+  //Get the status of the transaction
+  const transactionStatus = getReceipt.status;
+  console.log("The message transaction status " + transactionStatus);
+
+  //Create a new sender account with 1,000 tinybar starting balance
+  const senderAccount = await new AccountCreateTransaction()
+    .setKey(newAccountPublicKey)
+    .setInitialBalance(Hbar.fromTinybars(1000))
+    .execute(client);
+
+  //Create a recipient account with 0 tinybar starting balance
+  const recipientAccount = await new AccountCreateTransaction()
+    .setKey(newAccountPublicKey)
+    .setInitialBalance(Hbar.fromTinybars(1000))
+    .execute(client);
+
+  // Get the sender account ID
+  await senderAccount.getReceipt(client);
+  const senderAccountId = getReceipt.accountId;
+
+  //Log the sender account ID
+  console.log("The sender account ID is: " + senderAccountId);
+
+  // Get the recipient account ID
+  await recipientAccount.getReceipt(client);
+  const recipientAccountId = getReceipt.accountId;
+
+  //Log the recipient account ID
+  console.log("The recipient account ID is: " + recipientAccountId);
+
+  //Create a transaction to schedule
+  const transaction = new TransferTransaction()
+    .addHbarTransfer(senderAccount, Hbar.fromTinybars(-1))
+    .addHbarTransfer(recipientAccount, Hbar.fromTinybars(1));
 }
 main();
