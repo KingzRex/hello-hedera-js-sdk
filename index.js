@@ -149,7 +149,10 @@ async function main() {
 
   //Create a transaction to schedule
   const transaction = new TransferTransaction()
-    .addHbarTransfer(senderAccount, Hbar.fromTinybars(-1))
-    .addHbarTransfer(recipientAccount, Hbar.fromTinybars(1));
+    .addHbarTransfer(senderAccountId, Hbar.fromTinybars(-1))
+    .addHbarTransfer(recipientAccountId, Hbar.fromTinybars(1));
+
+    //Log the recipient account ID
+  console.log("The recipient account ID is: " + recipientAccountId);
 }
 main();
