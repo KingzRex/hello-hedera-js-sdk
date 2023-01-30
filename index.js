@@ -97,5 +97,15 @@ async function main() {
 
   // Wait 5 seconds between consensus topic creation and subscription creation
   await new Promise((resolve) => setTimeout(resolve, 5000));
+
+  // Create the query
+  new TopicMessageQuery()
+    .setTopicId(topicId)
+    .subscribe(client, null, (message) => {
+      let messageAsString = Buffer.from(message.contents, "utf8").toString();
+      console.log(
+        `${message.consensusTimestamp.toDate()} Received: ${messageAsString}`
+      );
+    });
 }
 main();
