@@ -8,6 +8,8 @@ const {
   TopicCreateTransaction,
   TopicMessageQuery,
   TopicMessageSubmitTransaction,
+  ScheduleSignTransaction,
+  ScheduleCreateTransaction,
 } = require("@hashgraph/sdk");
 require("dotenv").config();
 
@@ -152,7 +154,39 @@ async function main() {
     .addHbarTransfer(senderAccountId, Hbar.fromTinybars(-1))
     .addHbarTransfer(recipientAccountId, Hbar.fromTinybars(1));
 
-    //Log the recipient account ID
-  console.log("The recipient account ID is: " + recipientAccountId);
+
+  //Schedule a transaction
+  const scheduleTransaction = await new ScheduleCreateTransaction()
+    .setScheduledTransaction(transaction)
+    .execute(client);
+
+  //Get the receipt of the transaction
+  await scheduleTransaction.getReceipt(client);
+
+  //Get the schedule ID
+  const scheduleId = receipt.scheduleId;
+  console.log("The schedule ID is " + scheduleId);
+
+  //Get the scheduled transaction ID
+  const scheduledTxId = receipt.scheduledTransactionId;
+  console.log("The scheduled transaction ID is " + scheduledTxId);
+
+  //Submit the first signature
+const signature1 = await (await new ScheduleSignTransaction()
+.setScheduleId(scheduleId)
+.freezeWith(client)
+.sign(signerKey1))
+.execute(client);
+
+//Verify the transaction was successful and submit a schedule info request
+const receipt1 = await signature1.getReceipt(client);
+console.log("The transaction status is " +receipt1.status.toString());
+
+const query1 = await new ScheduleInfoQuery()
+.setScheduleId(scheduleId)
+.execute(client);
+
+//Confirm the signature was added to the schedule   
+console.log(query1);
 }
 main();
